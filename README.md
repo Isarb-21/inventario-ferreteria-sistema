@@ -228,7 +228,7 @@ Producto            1 ──── N  DetalleVenta
 
 ---
 
-### Sprint 4 —  Alertas, integración final y despliegue 
+### Sprint 4 — Alertas, integración final y despliegue 
 
 > 📅 **May 11 → May 18** · 🚫 Festivo: May 18 (Día de la Asecension) · <!-- TODO: Agregar enlace al Milestone en GitHub -->
 
