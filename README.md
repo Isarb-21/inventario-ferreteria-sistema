@@ -140,7 +140,7 @@ Producto            1 ──── N  DetalleVenta
 | **Compra** | id, proveedorId, fecha, total  |
 | **DetalleCompra** | id, compraId, productoId, cantidad, precioUnitario  |
 | **Venta** | id, fecha, total  |
-| **DetalleVenta ** | id, ventaId, productoId, cantidad, precioUnitario |
+| **DetalleVenta** | id, ventaId, productoId, cantidad, precioUnitario |
 
 ---
 
