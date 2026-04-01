@@ -165,8 +165,8 @@ Producto            1 ──── N  DetalleVenta
 
 | Sprint | Período | HUs | Alcance |
 |---|---|---|---|
-| [Sprint 3](#sprint-3--frontend-avanzado-e-integración) | Abr 16 → May 8 | HU-05, HU06, HU-07, HU-08 |Módulos de Compra y Venta con transacciones atómicas (prisma.$transaction), actualización automática de stock, historial con paginación. Frontend: formularios con relaciones (selects dinámicos), páginas de detalle, navegación completa, estados de carga y error.  |
-| [Sprint 4](#sprint-4--cierre-y-despliegue) |May 11 → May 18 | HU-09 | Alerta de stock bajo mínimo, integración de flujos completos (comprar → actualizar stock → vender → alertar), pruebas de integración, despliegue con Docker Compose, README. |
+| [Sprint 3](#sprint-3--Compras-Ventas-y-Frontend-avanzado) | Abr 16 → May 8 | HU-05, HU06, HU-07, HU-08 |Módulos de Compra y Venta con transacciones atómicas (prisma.$transaction), actualización automática de stock, historial con paginación. Frontend: formularios con relaciones (selects dinámicos), páginas de detalle, navegación completa, estados de carga y error.  |
+| [Sprint 4](#sprint-4--Alertas-integración-final-y-despliegue) |May 11 → May 18 | HU-09 | Alerta de stock bajo mínimo, integración de flujos completos (comprar → actualizar stock → vender → alertar), pruebas de integración, despliegue con Docker Compose, README. |
 
 ---
 
@@ -390,7 +390,7 @@ npx prisma generate
 | Recurso | Enlace |
 |---|---|
 | 📋 Tablero Kanban | <!-- TODO: Agregar enlace --> |
-| 📌 Issues (todos) | [Ver Issues ]([https://github.com/Isarb-21/inventario-ferreteria-sistema/issues]) |
+| 📌 Issues (todos) | [Ver Issues]([https://github.com/Isarb-21/inventario-ferreteria-sistema/issues])|
 | 🏁 Sprint 1 | <!-- TODO: Agregar Milestone --> |
 | 🏁 Sprint 2 | <!-- TODO: Agregar Milestone --> |
 | 🏁 Sprint 3 | <!-- TODO: Agregar Milestone --> |
