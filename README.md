@@ -390,7 +390,7 @@ npx prisma generate
 | Recurso | Enlace |
 |---|---|
 | 📋 Tablero Kanban | <!-- TODO: Agregar enlace --> |
-| 📌 Issues (todos) | [Ver Issues]([https://github.com/Isarb-21/inventario-ferreteria-sistema/issues]) |
+| 📌 Issues (todos) | []([https://github.com/Isarb-21/inventario-ferreteria-sistema/issues]) |
 | 🏁 Sprint 1 | <!-- TODO: Agregar Milestone --> |
 | 🏁 Sprint 2 | <!-- TODO: Agregar Milestone --> |
 | 🏁 Sprint 3 | <!-- TODO: Agregar Milestone --> |
