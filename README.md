@@ -35,7 +35,7 @@ El **Sistema de Inventario para Ferretería** es una aplicación web full-stack 
 | Aspecto | Detalle |
 |---|---|
 | **Tipo** | Proyecto demostrativo — Guiado por el Docente |
-| **Entidades** | 7 entidades con relaciones (ver modelo de datos) |
+| **Entidades** | 8 entidades con relaciones (ver modelo de datos) |
 | **Historias de Usuario** | 9 HUs organizadas en 4 sprints |
 | **Releases** | 2 releases alineados con los cortes académicos |
 | **Casos de Uso** | 5 CUs  (productos, proveedores, compras, ventas y stock) |
@@ -390,7 +390,7 @@ npx prisma generate
 | Recurso | Enlace |
 |---|---|
 | 📋 Tablero Kanban | <!-- TODO: Agregar enlace --> |
-| 📌 Issues (todos) | []([https://github.com/Isarb-21/inventario-ferreteria-sistema/issues]) |
+| 📌 Issues (todos) | [Ver Issues ]([https://github.com/Isarb-21/inventario-ferreteria-sistema/issues]) |
 | 🏁 Sprint 1 | <!-- TODO: Agregar Milestone --> |
 | 🏁 Sprint 2 | <!-- TODO: Agregar Milestone --> |
 | 🏁 Sprint 3 | <!-- TODO: Agregar Milestone --> |
