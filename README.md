@@ -155,7 +155,7 @@ Producto            1 ──── N  DetalleVenta
 | Sprint | Período | HUs | Alcance |
 |---|---|---|---|
 | [Sprint 1](#sprint-1--infraestructura-y-entidades-base) | Mar 31 → Abr 11 | HU-01, HU-02, HU-03 | Docker Compose, Prisma schema, migraciones, módulos CRUD de Categoria, Producto y Proveedor  |
-| [Sprint 2](#sprint-2--entidades-académicas-y-cross-cutting) | Abr 13 → Abr 14  | HU-04 | Asociación Proveedor Producto (muchos a muchos), Common module (Filters, Pipes, Interceptors), Frontend: estructura Next.js, listados y formularios de entidades base |
+| [Sprint 2](#sprint-2--Relaciones-,-módulos-avanzados-y-Frontend-base) | Abr 13 → Abr 14  | HU-04 | Asociación Proveedor Producto (muchos a muchos), Common module (Filters, Pipes, Interceptors), Frontend: estructura Next.js, listados y formularios de entidades base |
 
 ### Release 2 — Tercer Corte: Integración y Despliegue
 
