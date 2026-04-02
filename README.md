@@ -183,11 +183,11 @@ Producto            1 ──── N  DetalleVenta
 | HU-03 | Registro de Proveedores| `user-story` `backend` `frontend` | <!-- TODO --> |
 
 **Entregables:**
-- Docker Compose con PostgreSQL, NestJS y Next.js
-- Prisma schema con entidades Estudiante, Docente y ProgramaAcademico
-- Migraciones ejecutadas
-- CRUD completo (Controller → Service → Repository) para las 3 entidades
-- Frontend: listados y formularios básicos
+- Docker Compose configurado con servicios PostgreSQL, NestJS y Next.js
+- Prisma schema con modelos Producto, Categoria y Proveedor + migraciones
+- CRUD de Categorías con validación de unicidad y dependencias
+- CRUD de Productos con validaciones de precio, stock y relación a Categoría
+- CRUD de Proveedores con validación de NIT único 
 
 ---
 
@@ -221,10 +221,11 @@ Producto            1 ──── N  DetalleVenta
 | HU-08 | Consulta de Historial de Ventas | `user-story` `backend` `frontend` | <!-- TODO --> |
 
 **Entregables:**
-- Módulo de Matrícula con validación de unicidad compuesta
-- Módulo de Calificación con cálculo automático de nota definitiva
-- Common Module global (filtros, interceptores, pipes)
-- Frontend: estructura Next.js, listados y formularios de entidades base
+- CRUD de Compras con transacción atómica (prisma.$transaction) que incrementa stock automáticamente
+- Historial de Compras con paginación y filtro por proveedor (GET /compras?proveedorId=)
+- CRUD de Ventas con transacción atómica que valida stock disponible y lo reduce automáticamente
+- Historial de Ventas con paginación y detalle por venta
+- Frontend avanzado: formularios con selects dinámicos para Compras y Ventas, páginas de historial y detalle
 
 ---
 
@@ -237,40 +238,60 @@ Producto            1 ──── N  DetalleVenta
 | HU-09 |  Alerta de Productos con Stock Bajo Mínimo  | `user-story` `backend` `frontend` `infraestructura` `cross-cutting`   | <!-- TODO --> |
 
 **Entregables:**
-- For (productos, proveedores, compras, ventas y stock)
+- Endpoint GET /productos/stock-bajo con lógica stock < stockMinimo
+- Página de alertas de stock bajo con badge visible en el navbar
+- Integración de flujos completos: registrar producto → comprar → vender → consultar stock bajo
+- Pruebas de integración de extremo a extremo
+- docker-compose.yml con healthchecks y orden de dependencias correcto
+- README.md con instrucciones de instalación y ejecución
 ## 📅 Cronograma
+
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│                    SEGUNDO CORTE (Release 1) — Cierre: 17 Abr 2026          │
-│                          Backend + Frontend Base                            │
-├─────────────────────┬─────────────────────┬──────────────────────────────────┤
-│  Sprint 1           │    Sprint 2         │         Sprint 3                │
-│  Mar 16 → Mar 29    │  Mar 30 → Abr 10    │   Abr 13 → Abr 17             │
-│                     │                     │                                 │
-│ • Docker + Prisma   │ • Asignatura        │ • Matrícula                     │
-│ • Estudiante        │ • Período           │ • Calificación                  │
-│ • Docente           │ • Asignación Doc    │ • Common Module                 │
-│ • Programa          │ • Filters/Pipes     │ • Frontend: listados y forms    │
-│                     │                     │                                 │
-│ 🚫 Mar 23          │ 🚫 Abr 2-3         │                                 │
-│   (San José)        │   (Semana Santa)    │                                 │
-├─────────────────────┴─────────────────────┴──────────────────────────────────┤
-│                    TERCER CORTE (Release 2) — Cierre: 22 May 2026           │
-│                          Integración y Despliegue                           │
-├────────────────────────────────────┬─────────────────────────────────────────┤
-│        Sprint 4                    │          Sprint 5                      │
-│        Abr 20 → May 8             │          May 11 → May 22               │
-│                                    │                                        │
-│ • Frontend listados completos      │ • Integración de flujos               │
-│ • Frontend formularios             │ • Pruebas de integración              │
-│ • Navegación y layout              │ • Docker Compose validación           │
-│ • Selects dinámicos                │ • README y documentación              │
-│                                    │                                        │
-│ 🚫 May 1                          │ 🚫 May 18                             │
-│   (Día del Trabajo)               │   (Día de la Ascensión)               │
-└────────────────────────────────────┴─────────────────────────────────────────┘
+│                  SEGUNDO CORTE (Release 1) — Cierre: 17 Abr 2026             │
+│                          Backend + Frontend Base                             │
+├──────────────────────────────┬───────────────────────────────────────────────┤
+│         Sprint 1             │              Sprint 2                         │
+│      Mar 31 → Abr 11         │           Abr 13 → Abr 14                     │
+│                              │                                               │
+│ • Docker + Prisma            │ • Asociación Proveedor-Producto (N:M)         │
+│ • CRUD Categorías            │ • Endpoints asociar/desasociar productos      │
+│ • CRUD Productos             │ • Common Module: Filters, Pipes,              │
+│ • CRUD Proveedores           │   Interceptors                                │
+│                              │ • Frontend: listados y forms de               │
+│                              │   Productos, Categorías y Proveedores         │
+│                              │                                               │
+│ 🚫 Abr 2-3                   │                                               │
+│   (Semana Santa)             │                                               │
+├──────────────────────────────┴───────────────────────────────────────────────┤
+│  ⚠️  Sustentación de avances: 15 Abr 2026 — Entrega interna máx: 14 Abr      │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                  TERCER CORTE (Release 2) — Cierre: 22 May 2026              │
+│                       Integración y Despliegue                               │
+├──────────────────────────────┬───────────────────────────────────────────────┤
+│         Sprint 3             │              Sprint 4                         │
+│      Abr 16 → May 8          │           May 11 → May 16                     │
+│                              │                                               │
+│ • Módulo Compras             │ • Integración flujos completos                │
+│ • Módulo Ventas              │   (comprar → vender → stock bajo)             │
+│ • Stock automático           │ • Pruebas de integración                      │
+│   (prisma.$transaction)      │ • Docker Compose + healthchecks               │
+│ • Historial Compras          │ • README y documentación                      │
+│   (filtro por proveedor)     │                                               │
+│ • Historial Ventas           │                                               │
+│ • Alerta stock bajo          │                                               │
+│ • Frontend avanzado:         │                                               │
+│   selects dinámicos,         │                                               │
+│   páginas historial,         │                                               │
+│   badge stock bajo           │                                               │
+│                              │                                               │
+│ 🚫 May 1                    │ 🚫 May 18 (Ascensión)*                        │
+│   (Día del Trabajo)          │   *Sprint cierra antes del festivo            │
+└──────────────────────────────┴───────────────────────────────────────────────┘
+  ⚠️  Proyecto terminado: 16 May 2026 — Cierre académico oficial: 22 May 2026
 ```
+
 
 ### Festivos Colombianos (Marzo — Mayo 2026)
 
