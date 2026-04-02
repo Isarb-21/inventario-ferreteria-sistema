@@ -1,7 +1,7 @@
 # Sistema 💻 Inventario Ferreteria 🛠️
 
 
-> Proyecto full-stack guiado por el docente — Programación Avanzada 2026A
+> Proyecto full-stack en equipo — Programación Avanzada 2026A
 
 [![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)](https://nestjs.com/)
 [![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
@@ -34,7 +34,7 @@ El **Sistema de Inventario para Ferretería** es una aplicación web full-stack 
 
 | Aspecto | Detalle |
 |---|---|
-| **Tipo** | Proyecto demostrativo — Guiado por el Docente |
+| **Tipo** | Académico — Desarrollo en Equipo |
 | **Entidades** | 8 entidades con relaciones (ver modelo de datos) |
 | **Historias de Usuario** | 9 HUs organizadas en 4 sprints |
 | **Releases** | 2 releases alineados con los cortes académicos |
@@ -315,7 +315,7 @@ Cada Historia de Usuario se considera **terminada** cuando cumple **todos** los 
 
 El seguimiento del proyecto se realiza mediante un tablero Kanban en GitHub Projects:
 
-🔗 <!-- TODO: Agregar enlace al Tablero Kanban en GitHub Projects -->
+🔗 [Tablero Kanban](https://github.com/users/Isarb-21/projects/2)
 
 El tablero incluye:
 - **Columnas:** Todo → In Progress → Done
@@ -334,8 +334,8 @@ El tablero incluye:
 ### Clonar el repositorio
 
 ```bash
-git clone https://github.com/jaquimbayoc7/gestion-academica-sistema-avanzada.git
-cd gestion-academica-sistema-avanzada
+git clone https://github.com/Isarb-21/inventario-ferreteria-sistema.git
+cd inventario-ferreteria-sistema
 ```
 
 ### Configurar variables de entorno
@@ -349,7 +349,7 @@ cp .env.example .env
 # .env.example
 DB_USER=admin
 DB_PASSWORD=admin123
-DB_NAME=gestion_academica_avanzada_db
+DB_NAME=inventario_ferreteria_db
 ```
 
 ### Levantar los servicios
@@ -389,13 +389,13 @@ npx prisma generate
 
 | Recurso | Enlace |
 |---|---|
-| 📋 Tablero Kanban | <!-- TODO: Agregar enlace --> |
-| 📌 Issues (todos) | [Ver Issues]([https://github.com/Isarb-21/inventario-ferreteria-sistema/issues])|
-| 🏁 Sprint 1 | <!-- TODO: Agregar Milestone --> |
-| 🏁 Sprint 2 | <!-- TODO: Agregar Milestone --> |
-| 🏁 Sprint 3 | <!-- TODO: Agregar Milestone --> |
-| 🏁 Sprint 4 | <!-- TODO: Agregar Milestone --> |
-| 📖 Definition of Done | <!-- TODO: Agregar Issue --> |
+| 📋 Tablero Kanban | [Ver Tablero](https://github.com/users/Isarb-21/projects/2)|
+| 📌 Issues (todos) | [Ver Issues](https://github.com/Isarb-21/inventario-ferreteria-sistema/issues)|
+| 🏁 Sprint 1 |[Ver Sprint 1](https://github.com/Isarb-21/inventario-ferreteria-sistema/milestone/1)|
+| 🏁 Sprint 2 |[Ver Sprint 2](https://github.com/Isarb-21/inventario-ferreteria-sistema/milestone/2)|
+| 🏁 Sprint 3 |[Ver Sprint 3](https://github.com/Isarb-21/inventario-ferreteria-sistema/milestone/3)|
+| 🏁 Sprint 4 |[Ver Sprint 4](https://github.com/Isarb-21/inventario-ferreteria-sistema/milestone/4)|
+| 📖 Definition of Done |[Ver DoD](#-definition-of-done-dod) |
 
 ---
 
