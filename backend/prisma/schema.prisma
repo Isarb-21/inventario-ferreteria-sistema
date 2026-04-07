@@ -1,0 +1,153 @@
+// ============================================================
+// Prisma Schema — Sistema de Inventario para Ferreteria
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// ENTIDAD: Categoria
+// ============================================================
+model Categoria {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @unique
+  descripcion String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  productos   Producto[]
+
+  @@map("categorias")
+}
+
+// ============================================================
+// ENTIDAD: Producto
+// ============================================================
+model Producto {
+  id                 Int      @id @default(autoincrement())
+  nombre             String
+  codigo             String   @unique
+  precioCompra       Float
+  precioVenta        Float
+  stock              Int
+  stockMinimo        Int      @default(0)
+  categoriaId        Int
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  categoria          Categoria            @relation(fields: [categoriaId], references: [id])
+  proveedorProductos ProveedorProducto[]
+  detallesCompra     DetalleCompra[]
+  detallesVenta      DetalleVenta[]
+
+  @@map("productos")
+}
+
+// ============================================================
+// ENTIDAD: Proveedor
+// ============================================================
+model Proveedor {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  nit       String   @unique
+  telefono  String?
+  correo    String?
+  direccion String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  proveedorProductos ProveedorProducto[]
+  compras            Compra[]
+
+  @@map("proveedores")
+}
+
+// ============================================================
+// ENTIDAD: ProveedorProducto (N-M)
+// ============================================================
+model ProveedorProducto {
+  proveedorId Int
+  productoId  Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  proveedor   Proveedor @relation(fields: [proveedorId], references: [id])
+  producto    Producto  @relation(fields: [productoId], references: [id])
+
+  @@id([proveedorId, productoId])
+  @@map("proveedores_productos")
+}
+
+// ============================================================
+// ENTIDAD: Compra
+// ============================================================
+model Compra {
+  id          Int      @id @default(autoincrement())
+  proveedorId Int
+  fecha       DateTime @default(now())
+  total       Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  proveedor   Proveedor       @relation(fields: [proveedorId], references: [id])
+  detalles    DetalleCompra[]
+
+  @@map("compras")
+}
+
+// ============================================================
+// ENTIDAD: DetalleCompra
+// ============================================================
+model DetalleCompra {
+  id             Int      @id @default(autoincrement())
+  compraId       Int
+  productoId     Int
+  cantidad       Int
+  precioUnitario Float
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  compra         Compra   @relation(fields: [compraId], references: [id])
+  producto       Producto @relation(fields: [productoId], references: [id])
+
+  @@map("detalles_compra")
+}
+
+// ============================================================
+// ENTIDAD: Venta
+// ============================================================
+model Venta {
+  id        Int      @id @default(autoincrement())
+  fecha     DateTime @default(now())
+  total     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  detalles  DetalleVenta[]
+
+  @@map("ventas")
+}
+
+// ============================================================
+// ENTIDAD: DetalleVenta
+// ============================================================
+model DetalleVenta {
+  id             Int      @id @default(autoincrement())
+  ventaId        Int
+  productoId     Int
+  cantidad       Int
+  precioUnitario Float
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  venta          Venta    @relation(fields: [ventaId], references: [id])
+  producto       Producto @relation(fields: [productoId], references: [id])
+
+  @@map("detalles_venta")
+}
