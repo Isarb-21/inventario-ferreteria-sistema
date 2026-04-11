@@ -9,19 +9,23 @@ export interface Producto {
   stock: number;
   stockMinimo: number;
   categoriaId: number;
+  categoria?: { id: number, nombre: string }; // from relation
   createdAt?: string;
   updatedAt?: string;
 }
 
-export type CreateProductoDto = Omit<Producto, "id" | "createdAt" | "updatedAt">;
+export type CreateProductoDto = Omit<Producto, "id" | "createdAt" | "updatedAt" | "categoria">;
 export type UpdateProductoDto = Partial<CreateProductoDto>;
 
 export const productosService = {
-  findAll: () => api.get<Producto[]>("/producto"),
+  findAll: (params?: { page?: number; limit?: number }) => {
+    const query = params ? `?page=${params.page || 1}&limit=${params.limit || 10}` : '';
+    return api.get<{ data: Producto[]; total: number }>(`/producto${query}`);
+  },
   findOne: (id: number) => api.get<Producto>(`/producto/${id}`),
   create: (data: CreateProductoDto) =>
     api.post<Producto>("/producto", data),
   update: (id: number, data: UpdateProductoDto) =>
-    api.patch<Producto>(`/producto/${id}`, data),
+    api.put<Producto>(`/producto/${id}`, data),
   remove: (id: number) => api.delete<void>(`/producto/${id}`),
 };
