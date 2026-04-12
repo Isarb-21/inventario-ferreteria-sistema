@@ -23,19 +23,20 @@ export class ProductoService {
       throw new BadRequestException('El precio de venta debe ser mayor o igual al precio de compra');
     }
     
-    const existCod = await this.productoRepo.findByCodigo(data.codigo);
+    // Limpiamos código y nombre de espacios
+    const cleanCodigo = data.codigo.trim();
+    const cleanNombre = data.nombre.trim();
+
+    const existCod = await this.productoRepo.findByCodigo(cleanCodigo);
     if (existCod) {
       throw new BadRequestException('El código del producto ya existe');
     }
 
     return this.productoRepo.create({
-      nombre: data.nombre,
-      codigo: data.codigo,
-      precioCompra: data.precioCompra,
-      precioVenta: data.precioVenta,
-      stock: data.stock,
+      ...data,
+      nombre: cleanNombre,
+      codigo: cleanCodigo,
       stockMinimo: data.stockMinimo || 0,
-      categoriaId: data.categoriaId,
     });
   }
 
@@ -49,11 +50,18 @@ export class ProductoService {
       throw new BadRequestException('El precio de venta debe ser mayor o igual al precio de compra');
     }
 
-    if (data.codigo && data.codigo !== prod.codigo) {
-      const existCod = await this.productoRepo.findByCodigo(data.codigo);
-      if (existCod) {
-        throw new BadRequestException('El código del producto ya existe');
+    if (data.codigo) {
+      data.codigo = data.codigo.trim();
+      if (data.codigo !== prod.codigo) {
+        const existCod = await this.productoRepo.findByCodigo(data.codigo);
+        if (existCod) {
+          throw new BadRequestException('El código del producto ya existe');
+        }
       }
+    }
+
+    if (data.nombre) {
+      data.nombre = data.nombre.trim();
     }
 
     return this.productoRepo.update(id, data);

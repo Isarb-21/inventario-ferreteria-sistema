@@ -38,7 +38,8 @@ async function request<T>(
     throw new ApiError(res.status, messages);
   }
 
-  const json: ApiResponse<T> = await res.json();
+  const text = await res.text();
+  const json: ApiResponse<T> = text ? JSON.parse(text) : { statusCode: res.status, message: 'OK', data: null as T };
   return json.data;
 }
 
