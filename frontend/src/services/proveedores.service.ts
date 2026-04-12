@@ -4,9 +4,9 @@ export interface Proveedor {
   id: number;
   nombre: string;
   nit: string;
-  telefono?: string;
-  correo?: string;
-  direccion?: string;
+  telefono?: string | null;
+  correo?: string | null;
+  direccion?: string | null;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -20,6 +20,6 @@ export const proveedoresService = {
   create: (data: CreateProveedorDto) =>
     api.post<Proveedor>("/proveedor", data),
   update: (id: number, data: UpdateProveedorDto) =>
-    api.patch<Proveedor>(`/proveedor/${id}`, data),
+    api.put<Proveedor>(`/proveedor/${id}`, data),
   remove: (id: number) => api.delete<void>(`/proveedor/${id}`),
 };

@@ -11,7 +11,7 @@ export class CategoriaService {
     const nombre = dto.nombre.trim();
     // Verificamos si ya existe con este nombre
     const existe = await this.categoriaRepository.findByNombre(nombre);
-    if (existe) throw new ConflictException('Esta categoría ya existe.');
+    if (existe) throw new ConflictException('Ya existe una categoría con ese nombre.');
 
     return this.categoriaRepository.create({ ...dto, nombre });
   }
@@ -27,7 +27,17 @@ export class CategoriaService {
   }
 
   async update(id: number, dto: UpdateCategoriaDto) {
-    if (dto.nombre) dto.nombre = dto.nombre.trim();
+    const cat = await this.findOne(id);
+
+    if (dto.nombre) {
+      dto.nombre = dto.nombre.trim();
+      // Validar unicidad del nombre si está cambiando
+      if (dto.nombre !== cat.nombre) {
+        const existe = await this.categoriaRepository.findByNombre(dto.nombre);
+        if (existe) throw new ConflictException('Ya existe una categoría con ese nombre.');
+      }
+    }
+
     return this.categoriaRepository.update(id, dto);
   }
 
@@ -35,16 +45,14 @@ export class CategoriaService {
     // 1. Buscamos primero para ver si existe y cargar sus productos
     const cat = await this.findOne(id);
 
-    // 2. Verificamos stock (Regla de Usuario)
-    const productosConStock = cat.productos?.filter(p => p.stock > 0) || [];
-    if (productosConStock.length > 0) {
-      throw new BadRequestException('No se puede eliminar la categoría porque tiene productos con stock.');
+    // 2. Si tiene CUALQUIER producto asociado se rechaza la eliminación (criterio de aceptación)
+    if (cat.productos && cat.productos.length > 0) {
+      throw new BadRequestException(
+        `No se puede eliminar la categoría "${cat.nombre}" porque tiene ${cat.productos.length} producto(s) asociado(s). Reasigne o elimine los productos primero.`
+      );
     }
 
-    // 3. Eliminamos productos asociados (aunque tengan stock 0)
-    await this.categoriaRepository.deleteAssociatedProducts(id);
-
-    // 4. Eliminamos la categoría
+    // 3. Eliminamos la categoría (no hay productos que eliminar)
     await this.categoriaRepository.delete(id);
 
     return { message: 'Categoría eliminada con éxito' };
