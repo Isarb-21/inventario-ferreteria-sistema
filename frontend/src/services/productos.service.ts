@@ -28,4 +28,5 @@ export const productosService = {
   update: (id: number, data: UpdateProductoDto) =>
     api.put<Producto>(`/producto/${id}`, data),
   remove: (id: number) => api.delete<void>(`/producto/${id}`),
+  findProveedores: (id: number) => api.get<any[]>(`/producto/${id}/proveedores`),
 };

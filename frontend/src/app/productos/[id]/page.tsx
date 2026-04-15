@@ -14,6 +14,7 @@ export default function ProductoDetallePage() {
 
   const [producto, setProducto] = useState<Producto | null>(null);
   const [categorias, setCategorias] = useState<any[]>([]);
+  const [proveedores, setProveedores] = useState<any[]>([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(true);
@@ -38,9 +39,10 @@ export default function ProductoDetallePage() {
 
   const loadData = async () => {
     try {
-      const [prod, catRes] = await Promise.all([
+      const [prod, catRes, provRes] = await Promise.all([
         productosService.findOne(idValue),
-        api.get<any>("/categoria")
+        api.get<any>("/categoria"),
+        productosService.findProveedores(idValue)
       ]);
       const data = prod;
       setProducto(data);
@@ -55,6 +57,9 @@ export default function ProductoDetallePage() {
       });
       const cats = Array.isArray(catRes) ? catRes : catRes?.data || [];
       setCategorias(cats);
+
+      const provs = (provRes as any)?.data || provRes;
+      setProveedores(Array.isArray(provs) ? provs.map((p: any) => p.proveedor) : []);
     } catch (err: any) {
       setError(err.message || "Error al cargar producto");
     } finally {
@@ -142,6 +147,10 @@ export default function ProductoDetallePage() {
             <input required type="number" name="stock" value={formData.stock} onChange={handleChange} min="0" className={styles.input} />
           </div>
           <div className={styles.formGroup}>
+            <label className={styles.label}>Stock Mínimo</label>
+            <input required type="number" name="stockMinimo" value={formData.stockMinimo} onChange={handleChange} min="0" className={styles.input} />
+          </div>
+          <div className={styles.formGroup}>
             <label className={styles.label}>Precio Compra</label>
             <input required type="number" step="0.01" name="precioCompra" value={formData.precioCompra} onChange={handleChange} min="0" className={styles.input} />
           </div>
@@ -162,6 +171,37 @@ export default function ProductoDetallePage() {
             </button>
           </div>
         </form>
+
+        <hr style={{ margin: '2rem 0', border: 'none', borderTop: '1px solid #e2e8f0' }} />
+        <div style={{ marginTop: '2rem' }}>
+          <h3 style={{ fontSize: '1.2rem', color: '#1e293b', marginBottom: '1rem' }}>Proveedores Asociados</h3>
+          {proveedores.length === 0 ? (
+            <div style={{ padding: '1rem', backgroundColor: '#fff1f2', border: '1px solid #fecdd3', borderRadius: '8px', color: '#be123c', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500 }}>
+              <span style={{ fontSize: '1.2rem' }}>⚠️</span> Este producto no tiene un proveedor asociado. Asigna uno en la sección Proveedores para facilitar el reabastecimiento.
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+              {proveedores.map(prov => (
+                <Link key={prov.id} href={`/proveedores/${prov.id}`} style={{ textDecoration: 'none' }}>
+                  <div 
+                    title="Ver detalle del proveedor"
+                    style={{ 
+                      padding: '0.5rem 1rem', backgroundColor: '#f8fafc', border: '1px solid #cbd5e1', 
+                      color: '#334155', fontSize: '0.9rem', cursor: 'pointer', display: 'flex', 
+                      alignItems: 'center', gap: '0.4rem', borderRadius: '20px', transition: 'all 0.2s',
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                    }} 
+                    onMouseOver={(e) => { e.currentTarget.style.backgroundColor='#f1f5f9'; e.currentTarget.style.borderColor='#94a3b8'; }} 
+                    onMouseOut={(e) => { e.currentTarget.style.backgroundColor='#f8fafc'; e.currentTarget.style.borderColor='#cbd5e1'; }}
+                  >
+                    🏢 <span style={{ fontWeight: 500 }}>{prov.nombre}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
       </div>
     </div>
   );

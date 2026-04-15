@@ -2,14 +2,18 @@ import { Controller, Get, Post, Body, Put, Param, Delete, ParseIntPipe } from '@
 import { ProveedorService } from './proveedor.service';
 import { CreateProveedorDto } from './dto/create-proveedor.dto';
 import { UpdateProveedorDto } from './dto/update-proveedor.dto';
+import { AsociarProductosDto } from './dto/asociar-productos.dto';
 
 @Controller('proveedor')
 export class ProveedorController {
   constructor(private readonly proveedorService: ProveedorService) {}
 
   @Get()
-  findAll() {
-    return this.proveedorService.findAll();
+  findAll(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.proveedorService.findAll(page ? +page : 1, limit ? +limit : 10);
   }
 
   @Get(':id')
@@ -37,12 +41,20 @@ export class ProveedorController {
     return this.proveedorService.findProductos(id);
   }
 
-  @Post(':id/productos')
+  @Post(':id/producto')
   asociarProducto(
     @Param('id', ParseIntPipe) id: number,
     @Body('productoId', ParseIntPipe) productoId: number,
   ) {
     return this.proveedorService.asociarProducto(id, productoId);
+  }
+
+  @Post(':id/productos')
+  asociarProductos(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: AsociarProductosDto,
+  ) {
+    return this.proveedorService.asociarProductos(id, data.productosIds);
   }
 
   @Delete(':id/productos/:productoId')

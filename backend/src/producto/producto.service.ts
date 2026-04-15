@@ -18,6 +18,11 @@ export class ProductoService {
     return producto;
   }
 
+  async findProveedores(id: number) {
+    await this.findOne(id); // Validar existencia
+    return this.productoRepo.findProveedores(id);
+  }
+
   async create(data: CreateProductoDto) {
     if (data.precioVenta < data.precioCompra) {
       throw new BadRequestException('El precio de venta debe ser mayor o igual al precio de compra');

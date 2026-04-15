@@ -6,10 +6,16 @@ import { Prisma } from '../../generated/prisma';
 export class ProveedorRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findAll() {
-    return this.prisma.proveedor.findMany({
-      orderBy: { id: 'desc' },
-    });
+  async findAll(skip?: number, take?: number) {
+    const [data, total] = await Promise.all([
+      this.prisma.proveedor.findMany({
+        skip,
+        take,
+        orderBy: { id: 'desc' },
+      }),
+      this.prisma.proveedor.count(),
+    ]);
+    return { data, total };
   }
 
   async findOne(id: number) {
@@ -55,6 +61,47 @@ export class ProveedorRepository {
       where: { proveedorId_productoId: { proveedorId, productoId } },
       create: { proveedorId, productoId },
       update: {},
+    });
+  }
+
+  async asociarProductos(proveedorId: number, productosIds: number[]) {
+    // Para simplificar y mantener consistencia, evitamos duplicados o los generamos todos dentro de una transacción.
+    // Usaremos un proceso transaccional que borre las asocaciones previas si no están en la lista
+    // y cree/actualice las que sí.
+    const currentAssociations = await this.prisma.proveedorProducto.findMany({
+      where: { proveedorId }
+    });
+
+    const currentIds = currentAssociations.map(a => a.productoId);
+    
+    // Identificar los que hay que eliminar
+    const toDelete = currentIds.filter(id => !productosIds.includes(id));
+    
+    // Identificar los que hay que crear (no existían)
+    const toCreate = productosIds.filter(id => !currentIds.includes(id));
+
+    return this.prisma.$transaction(async (tx) => {
+      // 1. Eliminar los deseleccionados
+      if (toDelete.length > 0) {
+        await tx.proveedorProducto.deleteMany({
+          where: {
+            proveedorId,
+            productoId: { in: toDelete }
+          }
+        });
+      }
+      
+      // 2. Crear los nuevos
+      if (toCreate.length > 0) {
+        await tx.proveedorProducto.createMany({
+          data: toCreate.map(id => ({
+            proveedorId,
+            productoId: id
+          }))
+        });
+      }
+
+      return true;
     });
   }
 

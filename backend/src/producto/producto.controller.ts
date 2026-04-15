@@ -20,6 +20,11 @@ export class ProductoController {
     return this.productoService.findOne(id);
   }
 
+  @Get(':id/proveedores')
+  findProveedores(@Param('id', ParseIntPipe) id: number) {
+    return this.productoService.findProveedores(id);
+  }
+
   @Post()
   create(@Body() createProductoDto: CreateProductoDto) {
     return this.productoService.create(createProductoDto);

@@ -3,12 +3,30 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { proveedoresService } from "@/services/proveedores.service";
+import { productosService, Producto } from "@/services/productos.service";
+import { ProductosSelectorMultiple } from "@/components/ProductosSelectorMultiple/ProductosSelectorMultiple";
 import styles from "../../productos/producto.module.css";
 
 export default function NuevoProveedorPage() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [productos, setProductos] = useState<Producto[]>([]);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
+  useEffect(() => {
+    loadProductos();
+  }, []);
+
+  const loadProductos = async () => {
+    try {
+      const res = await productosService.findAll({ limit: 1000 });
+      const data = (res as any)?.data?.data || (res as any).data || res;
+      setProductos(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Error al cargar productos", err);
+    }
+  };
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -28,13 +46,18 @@ export default function NuevoProveedorPage() {
     setLoading(true);
 
     try {
-      await proveedoresService.create({
+      const newProv = await proveedoresService.create({
         nombre: formData.nombre,
         nit: formData.nit,
         telefono: formData.telefono || undefined,
         correo: formData.correo || undefined,
         direccion: formData.direccion || undefined,
       });
+
+      if (selectedIds.length > 0 && newProv && (newProv as any).id) {
+        await proveedoresService.asociarProductos((newProv as any).id, selectedIds);
+      }
+
       router.push("/proveedores");
     } catch (err: any) {
       setError(err.message || "Error al crear proveedor");
@@ -123,6 +146,16 @@ export default function NuevoProveedorPage() {
             </button>
           </div>
         </form>
+
+        <hr style={{ margin: "2rem 0", border: 'none', borderTop: '1px solid #e2e8f0' }} />
+        
+        <div style={{ marginBottom: "2rem" }}>
+          <ProductosSelectorMultiple 
+            productos={productos} 
+            selectedIds={selectedIds} 
+            onChange={setSelectedIds} 
+          />
+        </div>
       </div>
     </div>
   );

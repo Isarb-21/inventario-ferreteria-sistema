@@ -7,8 +7,9 @@ import { UpdateProveedorDto } from './dto/update-proveedor.dto';
 export class ProveedorService {
   constructor(private readonly proveedorRepo: ProveedorRepository) {}
 
-  async findAll() {
-    return this.proveedorRepo.findAll();
+  async findAll(page: number = 1, limit: number = 10) {
+    const skip = (page - 1) * limit;
+    return this.proveedorRepo.findAll(skip, limit);
   }
 
   async findOne(id: number) {
@@ -25,6 +26,13 @@ export class ProveedorService {
   async asociarProducto(proveedorId: number, productoId: number) {
     await this.findOne(proveedorId); // Verifica existencia del proveedor
     return this.proveedorRepo.asociarProducto(proveedorId, productoId);
+  }
+
+  async asociarProductos(proveedorId: number, productosIds: number[]) {
+    await this.findOne(proveedorId); // Validar que existe el proveedor.
+    // Opcional: Validar que todos los productos existen
+    await this.proveedorRepo.asociarProductos(proveedorId, productosIds);
+    return { success: true, message: 'Productos asociados correctamente' };
   }
 
   async desasociarProducto(proveedorId: number, productoId: number) {

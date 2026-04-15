@@ -3,6 +3,8 @@ import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { proveedoresService, Proveedor } from "@/services/proveedores.service";
+import { productosService, Producto } from "@/services/productos.service";
+import { ProductosSelectorMultiple } from "@/components/ProductosSelectorMultiple/ProductosSelectorMultiple";
 import styles from "../../productos/producto.module.css";
 
 export default function DetalleProveedorPage({
@@ -22,6 +24,9 @@ export default function DetalleProveedorPage({
   const [deleting, setDeleting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  const [allProductos, setAllProductos] = useState<Producto[]>([]);
+  const [selectedProductoIds, setSelectedProductoIds] = useState<number[]>([]);
+
   const [formData, setFormData] = useState({
     nombre: "",
     nit: "",
@@ -36,8 +41,12 @@ export default function DetalleProveedorPage({
 
   const loadData = async () => {
     try {
-      const data = await proveedoresService.findOne(proveedorId);
-      const prov = data as any;
+      const [data, prodRes, asocRes] = await Promise.all([
+        proveedoresService.findOne(proveedorId),
+        productosService.findAll({ limit: 1000 }),
+        proveedoresService.findProductos(proveedorId)
+      ]);
+      const prov: any = data;
       setProveedor(prov);
       setFormData({
         nombre: prov.nombre || "",
@@ -46,6 +55,14 @@ export default function DetalleProveedorPage({
         correo: prov.correo || "",
         direccion: prov.direccion || "",
       });
+
+      const productosList = (prodRes as any)?.data?.data || (prodRes as any).data || prodRes;
+      setAllProductos(Array.isArray(productosList) ? productosList : []);
+
+      const asociados = (asocRes as any)?.data || asocRes;
+      const ids = Array.isArray(asociados) ? asociados.map((a: any) => a.productoId) : [];
+      setSelectedProductoIds(ids);
+
     } catch (err: any) {
       setError(err.message || "Error al cargar proveedor");
     } finally {
@@ -71,7 +88,10 @@ export default function DetalleProveedorPage({
         correo: formData.correo || undefined,
         direccion: formData.direccion || undefined,
       });
-      setSuccess("Proveedor actualizado exitosamente");
+
+      await proveedoresService.asociarProductos(proveedorId, selectedProductoIds);
+
+      setSuccess("Proveedor y productos actualizados exitosamente!");
     } catch (err: any) {
       setError(err.message || "Error al actualizar proveedor");
     } finally {
@@ -213,6 +233,16 @@ export default function DetalleProveedorPage({
             </button>
           </div>
         </form>
+
+        <hr style={{ margin: "2rem 0", border: 'none', borderTop: '1px solid #e2e8f0' }} />
+        
+        <div style={{ marginBottom: "2rem" }}>
+          <ProductosSelectorMultiple 
+            productos={allProductos} 
+            selectedIds={selectedProductoIds} 
+            onChange={setSelectedProductoIds} 
+          />
+        </div>
       </div>
     </div>
   );

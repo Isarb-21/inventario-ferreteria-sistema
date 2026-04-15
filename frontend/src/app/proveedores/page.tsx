@@ -7,24 +7,37 @@ import styles from "../productos/producto.module.css";
 export default function ProveedoresPage() {
   const [proveedores, setProveedores] = useState<Proveedor[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const limit = 10;
 
   useEffect(() => {
     fetchProveedores();
-  }, []);
+  }, [page]);
 
   const fetchProveedores = async () => {
+    setLoading(true);
     try {
-      const response = await proveedoresService.findAll();
-      if (Array.isArray(response)) {
+      const response = await proveedoresService.findAll({ page, limit });
+      if (response && response.data && Array.isArray(response.data)) {
+        setProveedores(response.data);
+        setTotal(response.total);
+      } else if (Array.isArray(response)) {
         setProveedores(response);
-      } else if (response && (response as any).data) {
-        setProveedores((response as any).data);
       }
     } catch (error) {
       console.error("Error cargando proveedores", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleNext = () => {
+    if (page * limit < total) setPage(p => p + 1);
+  };
+
+  const handlePrev = () => {
+    if (page > 1) setPage(p => p - 1);
   };
 
   return (
@@ -76,6 +89,28 @@ export default function ProveedoresPage() {
                 )}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {!loading && total > 0 && (
+          <div className={styles.pagination}>
+            <button 
+              className={styles.btnSecondary} 
+              onClick={handlePrev} 
+              disabled={page === 1}
+              style={{ opacity: page === 1 ? 0.5 : 1, cursor: page === 1 ? 'not-allowed' : 'pointer' }}
+            >
+              Anterior
+            </button>
+            <span className={styles.pageInfo}>Página {page} de {Math.ceil(total / limit) || 1}</span>
+            <button 
+              className={styles.btnSecondary} 
+              onClick={handleNext} 
+              disabled={page * limit >= total}
+              style={{ opacity: page * limit >= total ? 0.5 : 1, cursor: page * limit >= total ? 'not-allowed' : 'pointer' }}
+            >
+              Siguiente
+            </button>
           </div>
         )}
       </div>

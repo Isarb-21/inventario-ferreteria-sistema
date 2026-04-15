@@ -72,13 +72,15 @@ model Proveedor {
 // ENTIDAD: ProveedorProducto (N-M)
 // ============================================================
 model ProveedorProducto {
-  proveedorId Int
-  productoId  Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  proveedorId       Int
+  productoId        Int
+  precioProveedor   Float?
+  tiempoEntregaDias Int?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  proveedor   Proveedor @relation(fields: [proveedorId], references: [id])
-  producto    Producto  @relation(fields: [productoId], references: [id])
+  proveedor         Proveedor @relation(fields: [proveedorId], references: [id])
+  producto          Producto  @relation(fields: [productoId], references: [id])
 
   @@id([proveedorId, productoId])
   @@map("proveedores_productos")

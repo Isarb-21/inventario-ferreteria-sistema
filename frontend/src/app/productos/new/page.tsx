@@ -87,7 +87,11 @@ export default function NuevoProductoPage() {
           </div>
           <div className={styles.formGroup}>
             <label className={styles.label}>Stock Inicial</label>
-            <input required type="number" name="stock" value={formData.stock} onChange={handleChange} min="0" className={styles.input} />
+            <input required type="number" name="stock" value={formData.stock} onChange={handleChange} min="0" className={styles.input} placeholder="0" />
+          </div>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Stock Mínimo</label>
+            <input required type="number" name="stockMinimo" value={formData.stockMinimo} onChange={handleChange} min="0" className={styles.input} placeholder="0" />
           </div>
           <div className={styles.formGroup}>
             <label className={styles.label}>Precio Compra</label>
