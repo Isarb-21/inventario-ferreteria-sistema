@@ -11,7 +11,7 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
-RUN npx prisma generate
+RUN DATABASE_URL="postgresql://postgres:postgres@localhost:5432/db" npx prisma generate
 RUN npm run build
 
 # --- Production stage ---
@@ -25,6 +25,7 @@ RUN npm ci --only=production
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/generated ./generated
 COPY prisma ./prisma
+COPY prisma.config.ts ./
 
 EXPOSE 3001
 
