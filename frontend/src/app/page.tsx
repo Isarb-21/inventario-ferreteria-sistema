@@ -25,6 +25,14 @@ export default function Home() {
             Organiza los productos de forma clara y facilita su consulta o búsqueda.
           </p>
         </Link>
+
+        <Link href="/proveedores" className={styles.card}>
+          <div className={styles.cardIcon}>🏢</div>
+          <h2 className={styles.cardTitle}>Proveedores</h2>
+          <p className={styles.cardDesc}>
+            Administra tus proveedores, su información de contacto y productos asociados.
+          </p>
+        </Link>
       </div>
     </div>
   );
