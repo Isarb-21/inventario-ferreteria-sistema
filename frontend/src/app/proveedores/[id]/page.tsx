@@ -19,6 +19,7 @@ export default function DetalleProveedorPage({
   const [proveedor, setProveedor] = useState<Proveedor | null>(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loadError, setLoadError] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -41,10 +42,9 @@ export default function DetalleProveedorPage({
 
   const loadData = async () => {
     try {
-      const [data, prodRes, asocRes] = await Promise.all([
+      const [data, prodRes] = await Promise.all([
         proveedoresService.findOne(proveedorId),
         productosService.findAll({ limit: 1000 }),
-        proveedoresService.findProductos(proveedorId)
       ]);
       const prov: any = data;
       setProveedor(prov);
@@ -59,9 +59,14 @@ export default function DetalleProveedorPage({
       const productosList = (prodRes as any)?.data?.data || (prodRes as any).data || prodRes;
       setAllProductos(Array.isArray(productosList) ? productosList : []);
 
-      const asociados = (asocRes as any)?.data || asocRes;
-      const ids = Array.isArray(asociados) ? asociados.map((a: any) => a.productoId) : [];
-      setSelectedProductoIds(ids);
+      try {
+        const asocRes = await proveedoresService.findProductos(proveedorId);
+        const asociados = (asocRes as any)?.data || asocRes;
+        const ids = Array.isArray(asociados) ? asociados.map((a: any) => a.productoId) : [];
+        setSelectedProductoIds(ids);
+      } catch {
+        setLoadError("No se pudieron cargar los productos asociados. Puedes intentar guardar de nuevo.");
+      }
 
     } catch (err: any) {
       setError(err.message || "Error al cargar proveedor");
@@ -143,6 +148,11 @@ export default function DetalleProveedorPage({
 
       <div className={styles.card} style={{ maxWidth: "700px", margin: "0 auto" }}>
         {error && <div className={styles.error}>{error}</div>}
+        {loadError && (
+          <div className={styles.error} style={{ borderLeftColor: "#f59e0b", color: "#92400e", backgroundColor: "#fffbeb" }}>
+            ⚠️ {loadError}
+          </div>
+        )}
         {success && (
           <div className={styles.error} style={{ borderLeftColor: "#10b981", color: "#047857", backgroundColor: "#ecfdf5" }}>
             {success}
@@ -242,6 +252,11 @@ export default function DetalleProveedorPage({
             selectedIds={selectedProductoIds} 
             onChange={setSelectedProductoIds} 
           />
+          {selectedProductoIds.length === 0 && (
+            <div style={{ marginTop: '1rem', padding: '0.75rem 1rem', backgroundColor: '#fff1f2', border: '1px solid #fecdd3', borderRadius: '8px', color: '#be123c', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' }}>
+              ⚠️ Este proveedor no tiene productos asociados. Selecciona productos arriba y guarda para asociarlos.
+            </div>
+          )}
         </div>
       </div>
     </div>
