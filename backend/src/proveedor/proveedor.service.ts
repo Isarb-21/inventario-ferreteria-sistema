@@ -12,9 +12,24 @@ export class ProveedorService {
   }
 
   async findOne(id: number) {
-    const proveedor = await this.proveedorRepo.findOne(id);
+    const proveedor = await this.proveedorRepo.findWithProductos(id);
     if (!proveedor) throw new NotFoundException('Proveedor no encontrado');
     return proveedor;
+  }
+
+  async findProductos(id: number) {
+    await this.findOne(id); // Verifica que el proveedor exista
+    return this.proveedorRepo.findProductos(id);
+  }
+
+  async asociarProducto(proveedorId: number, productoId: number) {
+    await this.findOne(proveedorId); // Verifica existencia del proveedor
+    return this.proveedorRepo.asociarProducto(proveedorId, productoId);
+  }
+
+  async desasociarProducto(proveedorId: number, productoId: number) {
+    await this.findOne(proveedorId);
+    return this.proveedorRepo.desasociarProducto(proveedorId, productoId);
   }
 
   async create(data: CreateProveedorDto) {

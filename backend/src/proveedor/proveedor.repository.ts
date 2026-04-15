@@ -21,6 +21,49 @@ export class ProveedorRepository {
     });
   }
 
+  async findWithProductos(id: number) {
+    return this.prisma.proveedor.findUnique({
+      where: { id },
+      include: {
+        proveedorProductos: {
+          include: {
+            producto: {
+              include: { categoria: true },
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+        },
+        compras: { take: 1 },
+      },
+    });
+  }
+
+  async findProductos(id: number) {
+    return this.prisma.proveedorProducto.findMany({
+      where: { proveedorId: id },
+      include: {
+        producto: {
+          include: { categoria: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async asociarProducto(proveedorId: number, productoId: number) {
+    return this.prisma.proveedorProducto.upsert({
+      where: { proveedorId_productoId: { proveedorId, productoId } },
+      create: { proveedorId, productoId },
+      update: {},
+    });
+  }
+
+  async desasociarProducto(proveedorId: number, productoId: number) {
+    return this.prisma.proveedorProducto.delete({
+      where: { proveedorId_productoId: { proveedorId, productoId } },
+    });
+  }
+
   async findByNit(nit: string) {
     return this.prisma.proveedor.findUnique({ where: { nit } });
   }

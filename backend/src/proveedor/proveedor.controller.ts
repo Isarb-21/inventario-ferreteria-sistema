@@ -31,4 +31,25 @@ export class ProveedorController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.proveedorService.remove(id);
   }
+
+  @Get(':id/productos')
+  findProductos(@Param('id', ParseIntPipe) id: number) {
+    return this.proveedorService.findProductos(id);
+  }
+
+  @Post(':id/productos')
+  asociarProducto(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('productoId', ParseIntPipe) productoId: number,
+  ) {
+    return this.proveedorService.asociarProducto(id, productoId);
+  }
+
+  @Delete(':id/productos/:productoId')
+  desasociarProducto(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('productoId', ParseIntPipe) productoId: number,
+  ) {
+    return this.proveedorService.desasociarProducto(id, productoId);
+  }
 }

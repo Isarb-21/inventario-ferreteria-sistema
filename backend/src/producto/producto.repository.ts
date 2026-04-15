@@ -46,4 +46,14 @@ export class ProductoRepository {
   async delete(id: number) {
     return this.prisma.producto.delete({ where: { id } });
   }
+
+  async findProveedores(id: number) {
+    return this.prisma.proveedorProducto.findMany({
+      where: { productoId: id },
+      include: {
+        proveedor: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
 }
