@@ -261,8 +261,15 @@
   display: flex;
   gap: 1rem;
   margin-top: 2.5rem;
-  padding-top: 1.5rem;
+  padding: 1.5rem;
   border-top: 1px solid #e5e7eb;
+  position: sticky;
+  bottom: 0;
+  background: var(--background);
+  z-index: 10;
+  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
 }
 
 @media (prefers-color-scheme: dark) {

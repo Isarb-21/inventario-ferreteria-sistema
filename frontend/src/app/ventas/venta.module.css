@@ -1,6 +1,6 @@
 /* ============================================================
-   compra.module.css — Estilos premium para el módulo de Compras
-   Extiende el sistema de diseño existente del proyecto
+   venta.module.css — Estilos premium para el módulo de Ventas
+   Paleta verde/teal para diferenciar de Compras (naranja/rojo)
    ============================================================ */
 
 /* Container & Layout */
@@ -24,7 +24,7 @@
 .title {
   font-size: 2.75rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #f59e0b, #ef4444, #ec4899);
+  background: linear-gradient(135deg, #10b981, #06b6d4, #8b5cf6);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -34,7 +34,7 @@
 
 @media (prefers-color-scheme: dark) {
   .title {
-    background: linear-gradient(135deg, #fcd34d, #fb7185, #f9a8d4);
+    background: linear-gradient(135deg, #6ee7b7, #67e8f9, #c4b5fd);
     background-clip: text;
     -webkit-background-clip: text;
   }
@@ -59,7 +59,7 @@
   }
 }
 
-/* Toolbar: filtros + acciones */
+/* Toolbar */
 .toolbar {
   display: flex;
   align-items: flex-end;
@@ -70,7 +70,7 @@
 
 /* Buttons */
 .btnPrimary {
-  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  background: linear-gradient(135deg, #10b981, #06b6d4);
   color: white;
   border: none;
   padding: 0.75rem 1.75rem;
@@ -79,7 +79,7 @@
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.35);
+  box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.35);
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -89,7 +89,7 @@
 
 .btnPrimary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
 }
 
 .btnPrimary:disabled {
@@ -100,8 +100,8 @@
 
 .btnSecondary {
   background: transparent;
-  color: #f59e0b;
-  border: 2px solid rgba(245, 158, 11, 0.5);
+  color: #10b981;
+  border: 2px solid rgba(16, 185, 129, 0.5);
   padding: 0.6rem 1.2rem;
   border-radius: 9999px;
   font-weight: 600;
@@ -112,8 +112,8 @@
 }
 
 .btnSecondary:hover {
-  background: rgba(245, 158, 11, 0.1);
-  border-color: #f59e0b;
+  background: rgba(16, 185, 129, 0.1);
+  border-color: #10b981;
 }
 
 .btnSecondary:disabled {
@@ -145,8 +145,8 @@
 
 .btnAction {
   background: transparent;
-  color: #f59e0b;
-  border: 1px solid #f59e0b;
+  color: #10b981;
+  border: 1px solid #10b981;
   padding: 0.4rem 0.8rem;
   border-radius: 6px;
   font-size: 0.9rem;
@@ -157,7 +157,7 @@
 }
 
 .btnAction:hover {
-  background: rgba(245, 158, 11, 0.08);
+  background: rgba(16, 185, 129, 0.08);
 }
 
 /* Table */
@@ -196,16 +196,16 @@
 }
 
 .table tr:hover td {
-  background-color: rgba(245, 158, 11, 0.03);
+  background-color: rgba(16, 185, 129, 0.03);
 }
 
 @media (prefers-color-scheme: dark) {
   .table th { color: #9ca3af; border-color: rgba(255,255,255,0.1); }
   .table td { border-color: rgba(255,255,255,0.05); }
-  .table tr:hover td { background-color: rgba(245, 158, 11, 0.07); }
+  .table tr:hover td { background-color: rgba(16, 185, 129, 0.07); }
 }
 
-/* Detail table (inside purchase detail) */
+/* Detail table (inside sale detail) */
 .detailTable {
   width: 100%;
   border-collapse: collapse;
@@ -215,8 +215,8 @@
 .detailTable th {
   text-align: left;
   padding: 0.75rem 0.9rem;
-  background: rgba(245, 158, 11, 0.08);
-  color: #92400e;
+  background: rgba(16, 185, 129, 0.08);
+  color: #065f46;
   font-weight: 600;
   font-size: 0.8rem;
   text-transform: uppercase;
@@ -234,7 +234,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .detailTable th { background: rgba(245,158,11,0.12); color: #fcd34d; }
+  .detailTable th { background: rgba(16,185,129,0.12); color: #6ee7b7; }
   .detailTable td { border-color: rgba(255,255,255,0.05); }
 }
 
@@ -244,20 +244,20 @@
   border-radius: 9999px;
   font-size: 0.82rem;
   font-weight: 600;
-  background-color: rgba(245, 158, 11, 0.1);
-  color: #b45309;
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #065f46;
   display: inline-block;
   white-space: nowrap;
 }
 
 .badgeSuccess {
-  background-color: rgba(16, 185, 129, 0.1);
-  color: #065f46;
+  background-color: rgba(6, 182, 212, 0.1);
+  color: #155e75;
 }
 
 @media (prefers-color-scheme: dark) {
-  .badge { color: #fcd34d; background-color: rgba(245, 158, 11, 0.18); }
-  .badgeSuccess { color: #6ee7b7; background-color: rgba(16,185,129,0.18); }
+  .badge { color: #6ee7b7; background-color: rgba(16, 185, 129, 0.18); }
+  .badgeSuccess { color: #67e8f9; background-color: rgba(6,182,212,0.18); }
 }
 
 /* Form elements */
@@ -305,8 +305,8 @@
 
 .input:focus, .select:focus {
   outline: none;
-  border-color: #f59e0b;
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
 }
 
 .inputError {
@@ -328,11 +328,11 @@
   }
   .input:focus, .select:focus {
     background-color: rgba(17, 24, 39, 0.9);
-    border-color: #fcd34d;
+    border-color: #6ee7b7;
   }
 }
 
-/* Dynamic items table (new purchase form) */
+/* Dynamic items table (new sale form) */
 .itemsSection {
   margin-top: 2rem;
 }
@@ -391,8 +391,8 @@
 
 .itemInput:focus {
   outline: none;
-  border-color: #f59e0b;
-  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
+  border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -420,10 +420,15 @@
   border-color: #ef4444;
 }
 
+.btnRemoveItem:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
 .btnAddItem {
-  background: rgba(245, 158, 11, 0.08);
-  color: #b45309;
-  border: 1.5px dashed rgba(245, 158, 11, 0.5);
+  background: rgba(16, 185, 129, 0.08);
+  color: #065f46;
+  border: 1.5px dashed rgba(16, 185, 129, 0.5);
   border-radius: 10px;
   padding: 0.65rem 1.25rem;
   cursor: pointer;
@@ -435,12 +440,27 @@
 }
 
 .btnAddItem:hover {
-  background: rgba(245, 158, 11, 0.14);
-  border-color: #f59e0b;
+  background: rgba(16, 185, 129, 0.14);
+  border-color: #10b981;
 }
 
 @media (prefers-color-scheme: dark) {
-  .btnAddItem { color: #fcd34d; background: rgba(245,158,11,0.1); }
+  .btnAddItem { color: #6ee7b7; background: rgba(16,185,129,0.1); }
+}
+
+/* Stock warning in the form */
+.stockWarning {
+  font-size: 0.75rem;
+  color: #d97706;
+  margin-top: 0.15rem;
+  font-weight: 500;
+}
+
+.stockOk {
+  font-size: 0.75rem;
+  color: #10b981;
+  margin-top: 0.15rem;
+  font-weight: 500;
 }
 
 /* Total summary */
@@ -451,8 +471,8 @@
   gap: 1rem;
   margin-top: 1.25rem;
   padding: 1.1rem 1.5rem;
-  background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(239,68,68,0.06));
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(6,182,212,0.06));
+  border: 1px solid rgba(16, 185, 129, 0.2);
   border-radius: 12px;
 }
 
@@ -465,7 +485,7 @@
 .totalValue {
   font-size: 1.75rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  background: linear-gradient(135deg, #10b981, #06b6d4);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -559,7 +579,7 @@
   color: #6b7280;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid rgba(245, 158, 11, 0.2);
+  border-bottom: 2px solid rgba(16, 185, 129, 0.2);
 }
 
 /* Back link */
@@ -575,7 +595,7 @@
 }
 
 .backLink:hover {
-  color: #f59e0b;
+  color: #10b981;
 }
 
 /* Actions row */

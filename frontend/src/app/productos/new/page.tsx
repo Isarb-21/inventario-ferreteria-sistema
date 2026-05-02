@@ -5,6 +5,7 @@ import { productosService } from "@/services/productos.service";
 import { api } from "@/lib/api"; // generic fallback for categorias if category service is limited
 import Link from "next/link";
 import styles from "../producto.module.css";
+import { toast } from "react-hot-toast";
 
 export default function NuevoProductoPage() {
   const router = useRouter();
@@ -42,6 +43,7 @@ export default function NuevoProductoPage() {
     const precioVenta = parseFloat(formData.precioVenta);
     if (precioVenta < precioCompra) {
       setError("El precio de venta debe ser mayor o igual al precio de compra.");
+      window.scrollTo({ top: 0, behavior: "smooth" });
       setLoading(false);
       return;
     }
@@ -56,9 +58,11 @@ export default function NuevoProductoPage() {
         stock: parseInt(formData.stock),
         stockMinimo: parseInt(formData.stockMinimo)
       });
+      toast.success("Producto registrado exitosamente");
       router.push("/productos");
     } catch (err: any) {
       setError(err.message || "Error al crear producto");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {
       setLoading(false);
     }
@@ -103,7 +107,18 @@ export default function NuevoProductoPage() {
           </div>
           
           <div className={styles.actions} style={{ gridColumn: '1 / -1' }}>
-            <Link href="/productos" className={styles.btnSecondary}>Cancelar</Link>
+            <button
+              type="button"
+              className={styles.btnSecondary}
+              onClick={() => {
+                if (window.confirm("¿Estás seguro de cancelar? Se perderán los datos no guardados.")) {
+                  router.push("/productos");
+                }
+              }}
+              disabled={loading}
+            >
+              Cancelar
+            </button>
             <button type="submit" className={styles.btnPrimary} disabled={loading}>
               {loading ? 'Guardando...' : 'Guardar Producto'}
             </button>

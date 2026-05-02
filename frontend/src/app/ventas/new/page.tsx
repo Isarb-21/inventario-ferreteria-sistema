@@ -1,15 +1,14 @@
 // ============================================================
-// app/compras/new/page.tsx — Formulario de nueva compra
-// HU-05: Registro de Compra a Proveedor
+// app/ventas/new/page.tsx — Formulario de nueva venta
+// HU-07: Registro de Venta al Público
 // ============================================================
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { comprasService, CompraDetalleInput } from "@/services/compras.service";
+import { ventasService, VentaDetalleInput } from "@/services/ventas.service";
 import { productosService, Producto } from "@/services/productos.service";
-import FiltroProveedor from "@/components/FiltroProveedor/FiltroProveedor";
-import styles from "../compra.module.css";
+import styles from "../venta.module.css";
 import { ApiError } from "@/lib/api";
 import { toast } from "react-hot-toast";
 
@@ -22,7 +21,6 @@ interface FilaDetalle {
 }
 
 interface FormErrors {
-  proveedor?: string;
   detalles?: string;
   general?: string;
   filas?: Record<number, { productoId?: string; cantidad?: string; precioUnitario?: string }>;
@@ -36,11 +34,10 @@ const nuevaFila = (): FilaDetalle => ({
   precioUnitario: "",
 });
 
-export default function NuevaCompraPage() {
+export default function NuevaVentaPage() {
   const router = useRouter();
 
   // ── Estado del formulario ────────────────────────────────
-  const [proveedorId, setProveedorId] = useState<number | undefined>(undefined);
   const [filas, setFilas] = useState<FilaDetalle[]>([nuevaFila()]);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -70,18 +67,18 @@ export default function NuevaCompraPage() {
     return acc + cant * precio;
   }, 0);
 
-  // ── Precio unitario sugerido al elegir producto ──────────
+  // ── Precio de venta sugerido al elegir producto ──────────
   const handleProductoSelect = useCallback(
     (key: number, productoId: number | "") => {
       setFilas((prev) =>
         prev.map((f) => {
           if (f._key !== key) return f;
-          // Pre-llenar con precioCompra del producto seleccionado
+          // Pre-llenar con precioVenta del producto seleccionado
           const prod = productos.find((p) => p.id === Number(productoId));
           return {
             ...f,
             productoId,
-            precioUnitario: prod ? prod.precioCompra : f.precioUnitario,
+            precioUnitario: prod ? prod.precioVenta : f.precioUnitario,
           };
         })
       );
@@ -106,15 +103,17 @@ export default function NuevaCompraPage() {
     setFilas((prev) => prev.filter((f) => f._key !== key));
   };
 
+  // ── Helper: obtener stock disponible de un producto ──────
+  const getStockProducto = (productoId: number | ""): number | null => {
+    if (productoId === "") return null;
+    const prod = productos.find((p) => p.id === Number(productoId));
+    return prod ? prod.stock : null;
+  };
+
   // ── Validación del formulario ────────────────────────────
   const validate = (): boolean => {
     const newErrors: FormErrors = { filas: {} };
     let valid = true;
-
-    if (!proveedorId) {
-      newErrors.proveedor = "Debes seleccionar un proveedor";
-      valid = false;
-    }
 
     const productoIdsUsados: number[] = [];
 
@@ -136,6 +135,13 @@ export default function NuevaCompraPage() {
       if (f.cantidad === "" || Number(f.cantidad) < 1 || !Number.isInteger(Number(f.cantidad))) {
         filaErrors.cantidad = "Cantidad entera ≥ 1";
         valid = false;
+      } else {
+        // Validar stock disponible
+        const stock = getStockProducto(f.productoId);
+        if (stock !== null && Number(f.cantidad) > stock) {
+          filaErrors.cantidad = `Stock insuficiente (disponible: ${stock})`;
+          valid = false;
+        }
       }
 
       if (f.precioUnitario === "" || Number(f.precioUnitario) <= 0) {
@@ -163,18 +169,18 @@ export default function NuevaCompraPage() {
     setSubmitting(true);
     setErrors({});
 
-    const detalles: CompraDetalleInput[] = filas.map((f) => ({
+    const detalles: VentaDetalleInput[] = filas.map((f) => ({
       productoId: Number(f.productoId),
       cantidad: Number(f.cantidad),
       precioUnitario: Number(f.precioUnitario),
     }));
 
     try {
-      await comprasService.create({ proveedorId: proveedorId!, detalles });
-      toast.success("Compra registrada exitosamente");
-      router.push("/compras");
+      await ventasService.create({ detalles });
+      toast.success("Venta registrada exitosamente");
+      router.push("/ventas");
     } catch (err: unknown) {
-      let msg = "Error al registrar la compra. Intenta de nuevo.";
+      let msg = "Error al registrar la venta. Intenta de nuevo.";
       if (err instanceof ApiError) {
         msg = err.messages.join(" · ");
       } else if (err instanceof Error) {
@@ -191,16 +197,16 @@ export default function NuevaCompraPage() {
     new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
-      minimumFractionDigits: 2,
+      minimumFractionDigits: 0,
     }).format(n);
 
   // ── Render ───────────────────────────────────────────────
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Nueva Compra</h1>
+      <h1 className={styles.title}>Nueva Venta</h1>
 
       <div className={styles.card} style={{ marginTop: "1.5rem" }}>
-        <form onSubmit={handleSubmit} noValidate id="form-nueva-compra">
+        <form onSubmit={handleSubmit} noValidate id="form-nueva-venta">
 
           {/* Error general */}
           {errors.general && (
@@ -208,21 +214,6 @@ export default function NuevaCompraPage() {
               {errors.general}
             </div>
           )}
-
-          {/* ── Sección: Proveedor ── */}
-          <p className={styles.sectionTitle}>Datos de la Compra</p>
-          <div className={styles.formGrid}>
-            <div className={styles.formGroup}>
-              <FiltroProveedor
-                value={proveedorId}
-                onChange={setProveedorId}
-                placeholder="— Selecciona un proveedor —"
-              />
-              {errors.proveedor && (
-                <span className={styles.fieldError}>{errors.proveedor}</span>
-              )}
-            </div>
-          </div>
 
           {/* ── Sección: Detalle de productos ── */}
           <div className={styles.itemsSection}>
@@ -242,11 +233,12 @@ export default function NuevaCompraPage() {
               <table className={styles.itemsTable}>
                 <thead>
                   <tr>
-                    <th style={{ width: "40%" }}>Producto</th>
-                    <th style={{ width: "18%" }}>Cantidad</th>
-                    <th style={{ width: "22%" }}>Precio Unitario (Q)</th>
+                    <th style={{ width: "35%" }}>Producto</th>
+                    <th style={{ width: "15%" }}>Stock Disp.</th>
+                    <th style={{ width: "15%" }}>Cantidad</th>
+                    <th style={{ width: "18%" }}>Precio Venta ($)</th>
                     <th style={{ width: "12%" }}>Subtotal</th>
-                    <th style={{ width: "8%" }}></th>
+                    <th style={{ width: "5%" }}></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -254,6 +246,10 @@ export default function NuevaCompraPage() {
                     const filaErr = errors.filas?.[fila._key] ?? {};
                     const subtotal =
                       (Number(fila.cantidad) || 0) * (Number(fila.precioUnitario) || 0);
+                    const stockDisp = getStockProducto(fila.productoId);
+                    const cantActual = Number(fila.cantidad) || 0;
+                    const stockInsuficiente = stockDisp !== null && cantActual > stockDisp;
+
                     return (
                       <tr key={fila._key}>
                         {/* Producto */}
@@ -273,12 +269,26 @@ export default function NuevaCompraPage() {
                             </option>
                             {productos.map((p) => (
                               <option key={p.id} value={p.id}>
-                                [{p.codigo}] {p.nombre} (Stock: {p.stock})
+                                [{p.codigo}] {p.nombre}
                               </option>
                             ))}
                           </select>
                           {filaErr.productoId && (
                             <p className={styles.fieldError}>{filaErr.productoId}</p>
+                          )}
+                        </td>
+
+                        {/* Stock disponible (solo lectura) */}
+                        <td style={{ textAlign: "center" }}>
+                          {stockDisp !== null ? (
+                            <span
+                              className={stockInsuficiente ? styles.stockWarning : styles.stockOk}
+                              style={{ fontSize: "0.9rem" }}
+                            >
+                              {stockDisp} uds.
+                            </span>
+                          ) : (
+                            <span style={{ color: "#9ca3af", fontSize: "0.85rem" }}>—</span>
                           )}
                         </td>
 
@@ -367,7 +377,7 @@ export default function NuevaCompraPage() {
 
             {/* Total calculado */}
             <div className={styles.totalBox}>
-              <span className={styles.totalLabel}>Total de la Compra:</span>
+              <span className={styles.totalLabel}>Total de la Venta:</span>
               <span className={styles.totalValue}>{formatMonto(total)}</span>
             </div>
           </div>
@@ -378,20 +388,20 @@ export default function NuevaCompraPage() {
               type="submit"
               className={styles.btnPrimary}
               disabled={submitting}
-              id="btn-guardar-compra"
+              id="btn-guardar-venta"
             >
-              {submitting ? "Guardando…" : "✓ Registrar Compra"}
+              {submitting ? "Guardando…" : "✓ Registrar Venta"}
             </button>
             <button
               type="button"
               className={styles.btnGhost}
               onClick={() => {
                 if (window.confirm("¿Estás seguro de cancelar? Se perderán los datos no guardados.")) {
-                  router.push("/compras");
+                  router.push("/ventas");
                 }
               }}
               disabled={submitting}
-              id="btn-cancelar-compra"
+              id="btn-cancelar-venta"
             >
               Cancelar
             </button>

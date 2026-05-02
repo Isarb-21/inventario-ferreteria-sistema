@@ -33,6 +33,22 @@ export default function Home() {
             Administra tus proveedores, su información de contacto y productos asociados.
           </p>
         </Link>
+
+        <Link href="/compras" className={styles.card}>
+          <div className={styles.cardIcon}>🛒</div>
+          <h2 className={styles.cardTitle}>Compras</h2>
+          <p className={styles.cardDesc}>
+            Registra compras a proveedores y consulta el historial de abastecimiento.
+          </p>
+        </Link>
+
+        <Link href="/ventas" className={styles.card}>
+          <div className={styles.cardIcon}>💰</div>
+          <h2 className={styles.cardTitle}>Ventas</h2>
+          <p className={styles.cardDesc}>
+            Registra ventas al público y consulta el historial de movimientos del día.
+          </p>
+        </Link>
       </div>
     </div>
   );

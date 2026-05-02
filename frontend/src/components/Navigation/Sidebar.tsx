@@ -16,6 +16,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     { name: 'Productos', path: '/productos', icon: '📦' },
     { name: 'Categorías', path: '/categorias', icon: '🏷️' },
     { name: 'Proveedores', path: '/proveedores', icon: '🚚' },
+    { name: 'Compras', path: '/compras', icon: '🛒' },
+    { name: 'Ventas', path: '/ventas', icon: '💰' },
   ];
 
   return (

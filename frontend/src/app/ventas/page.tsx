@@ -1,20 +1,19 @@
 // ============================================================
-// app/compras/page.tsx — Listado de compras
-// HU-05: Historial paginado | HU-06: Filtro por proveedor
+// app/ventas/page.tsx — Listado de ventas
+// HU-08: Historial paginado de ventas
 // ============================================================
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import {
-  comprasService,
-  Compra,
-} from "@/services/compras.service";
-import FiltroProveedor from "@/components/FiltroProveedor/FiltroProveedor";
-import styles from "./compra.module.css";
+  ventasService,
+  Venta,
+} from "@/services/ventas.service";
+import styles from "./venta.module.css";
 
-export default function ComprasPage() {
-  const [compras, setCompras] = useState<Compra[]>([]);
+export default function VentasPage() {
+  const [ventas, setVentas] = useState<Venta[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,45 +22,36 @@ export default function ComprasPage() {
   const [total, setTotal] = useState(0);
   const limit = 10;
 
-  // Filtro HU-06
-  const [proveedorId, setProveedorId] = useState<number | undefined>(undefined);
-
-  // Cuando cambia proveedor, volver a página 1
-  const handleProveedorChange = (id: number | undefined) => {
-    setProveedorId(id);
-    setPage(1);
-  };
-
-  const fetchCompras = useCallback(async () => {
+  const fetchVentas = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await comprasService.findAll({ page, limit, proveedorId });
+      const res = await ventasService.findAll({ page, limit });
       // El interceptor del backend envuelve en { data, total }
       if (res && typeof res === "object" && "data" in res) {
-        setCompras(res.data);
+        setVentas(res.data);
         setTotal(res.total);
       } else {
-        setCompras([]);
+        setVentas([]);
         setTotal(0);
       }
     } catch (err: unknown) {
       const msg =
-        err instanceof Error ? err.message : "Error al cargar las compras";
+        err instanceof Error ? err.message : "Error al cargar las ventas";
       setError(msg);
     } finally {
       setLoading(false);
     }
-  }, [page, limit, proveedorId]);
+  }, [page, limit]);
 
   useEffect(() => {
-    fetchCompras();
-  }, [fetchCompras]);
+    fetchVentas();
+  }, [fetchVentas]);
 
   const totalPages = Math.ceil(total / limit) || 1;
 
   const formatFecha = (iso: string) =>
-    new Date(iso).toLocaleDateString("es-GT", {
+    new Date(iso).toLocaleDateString("es-CO", {
       year: "numeric",
       month: "short",
       day: "2-digit",
@@ -73,38 +63,20 @@ export default function ComprasPage() {
     new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
-      minimumFractionDigits: 2,
+      minimumFractionDigits: 0,
     }).format(n);
 
   return (
     <div className={styles.container}>
       {/* ── Encabezado ── */}
       <div className={styles.header}>
-        <h1 className={styles.title}>Compras</h1>
-        <Link href="/compras/new" className={styles.btnPrimary} id="btn-nueva-compra">
-          + Nueva Compra
+        <h1 className={styles.title}>Ventas</h1>
+        <Link href="/ventas/new" className={styles.btnPrimary} id="btn-nueva-venta">
+          + Nueva Venta
         </Link>
       </div>
 
       <div className={styles.card}>
-        {/* ── Toolbar: filtro HU-06 ── */}
-        <div className={styles.toolbar}>
-          <FiltroProveedor
-            value={proveedorId}
-            onChange={handleProveedorChange}
-            placeholder="Todos los proveedores"
-          />
-          {proveedorId !== undefined && (
-            <button
-              className={styles.btnGhost}
-              onClick={() => handleProveedorChange(undefined)}
-              id="btn-limpiar-filtro"
-            >
-              ✕ Limpiar filtro
-            </button>
-          )}
-        </div>
-
         {/* ── Error ── */}
         {error && (
           <div className={styles.alertError} role="alert">
@@ -114,14 +86,12 @@ export default function ComprasPage() {
 
         {/* ── Tabla ── */}
         {loading ? (
-          <div className={styles.loading}>Cargando compras…</div>
-        ) : compras.length === 0 ? (
+          <div className={styles.loading}>Cargando ventas…</div>
+        ) : ventas.length === 0 ? (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>📦</div>
+            <div className={styles.emptyIcon}>🧾</div>
             <p className={styles.emptyText}>
-              {proveedorId !== undefined
-                ? "No se encontraron compras para este proveedor."
-                : "No hay compras registradas aún."}
+              No hay ventas registradas aún.
             </p>
           </div>
         ) : (
@@ -131,35 +101,31 @@ export default function ComprasPage() {
                 <tr>
                   <th>#</th>
                   <th>Fecha</th>
-                  <th>Proveedor</th>
-                  <th>Productos</th>
+                  <th>Ítems</th>
                   <th>Total</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                {compras.map((c) => (
-                  <tr key={c.id}>
+                {ventas.map((v) => (
+                  <tr key={v.id}>
                     <td>
-                      <span className={styles.badge}>#{c.id}</span>
+                      <span className={styles.badge}>#{v.id}</span>
                     </td>
                     <td style={{ whiteSpace: "nowrap" }}>
-                      {formatFecha(c.fecha)}
-                    </td>
-                    <td style={{ fontWeight: 600 }}>
-                      {c.proveedor?.nombre ?? `Proveedor #${c.proveedorId}`}
+                      {formatFecha(v.fecha)}
                     </td>
                     <td>
                       <span className={`${styles.badge} ${styles.badgeSuccess}`}>
-                        {c.detalles?.length ?? 0} ítem{c.detalles?.length !== 1 ? "s" : ""}
+                        {v.detalles?.length ?? 0} ítem{v.detalles?.length !== 1 ? "s" : ""}
                       </span>
                     </td>
-                    <td style={{ fontWeight: 700 }}>{formatMonto(c.total)}</td>
+                    <td style={{ fontWeight: 700 }}>{formatMonto(v.total)}</td>
                     <td>
                       <Link
-                        href={`/compras/${c.id}`}
+                        href={`/ventas/${v.id}`}
                         className={styles.btnAction}
-                        id={`btn-ver-compra-${c.id}`}
+                        id={`btn-ver-venta-${v.id}`}
                       >
                         Ver detalle
                       </Link>
@@ -185,7 +151,7 @@ export default function ComprasPage() {
             <span className={styles.pageInfo}>
               Página {page} de {totalPages}
               <span style={{ marginLeft: "0.5rem", color: "#9ca3af", fontWeight: 400 }}>
-                ({total} compras)
+                ({total} ventas)
               </span>
             </span>
             <button

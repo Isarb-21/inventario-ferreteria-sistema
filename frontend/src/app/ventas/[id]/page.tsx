@@ -1,39 +1,39 @@
 // ============================================================
-// app/compras/[id]/page.tsx — Detalle de una compra
-// HU-05: Consultar compra por ID con detalle completo
+// app/ventas/[id]/page.tsx — Detalle de una venta
+// HU-08: Consultar venta por ID con detalle completo
 // ============================================================
 "use client";
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { comprasService, Compra } from "@/services/compras.service";
-import styles from "../compra.module.css";
+import { ventasService, Venta } from "@/services/ventas.service";
+import styles from "../venta.module.css";
 import { ApiError } from "@/lib/api";
 
-export default function DetalleCompraPage() {
+export default function DetalleVentaPage() {
   const params = useParams();
   const id = Number(params.id);
 
-  const [compra, setCompra] = useState<Compra | null>(null);
+  const [venta, setVenta] = useState<Venta | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id || isNaN(id)) {
-      setError("ID de compra inválido");
+      setError("ID de venta inválido");
       setLoading(false);
       return;
     }
 
-    comprasService
+    ventasService
       .findOne(id)
-      .then((data) => setCompra(data))
+      .then((data) => setVenta(data))
       .catch((err: unknown) => {
-        let msg = "Error al cargar la compra";
+        let msg = "Error al cargar la venta";
         if (err instanceof ApiError) {
           msg = err.status === 404
-            ? `La compra #${id} no existe`
+            ? `La venta #${id} no existe`
             : err.messages.join(" · ");
         } else if (err instanceof Error) {
           msg = err.message;
@@ -44,7 +44,7 @@ export default function DetalleCompraPage() {
   }, [id]);
 
   const formatFecha = (iso: string) =>
-    new Date(iso).toLocaleDateString("es-GT", {
+    new Date(iso).toLocaleDateString("es-CO", {
       weekday: "long",
       year: "numeric",
       month: "long",
@@ -57,7 +57,7 @@ export default function DetalleCompraPage() {
     new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
-      minimumFractionDigits: 2,
+      minimumFractionDigits: 0,
     }).format(n);
 
   // ── Loading ──────────────────────────────────────────────
@@ -65,22 +65,22 @@ export default function DetalleCompraPage() {
     return (
       <div className={styles.container}>
         <div className={styles.card}>
-          <div className={styles.loading}>Cargando detalle de compra…</div>
+          <div className={styles.loading}>Cargando detalle de venta…</div>
         </div>
       </div>
     );
   }
 
   // ── Error ────────────────────────────────────────────────
-  if (error || !compra) {
+  if (error || !venta) {
     return (
       <div className={styles.container}>
-        <Link href="/compras" className={styles.backLink}>
-          ← Volver a compras
+        <Link href="/ventas" className={styles.backLink}>
+          ← Volver a ventas
         </Link>
         <div className={styles.card}>
           <div className={styles.alertError} role="alert">
-            {error ?? "No se pudo cargar la compra"}
+            {error ?? "No se pudo cargar la venta"}
           </div>
         </div>
       </div>
@@ -88,18 +88,18 @@ export default function DetalleCompraPage() {
   }
 
   // ── Datos calculados ─────────────────────────────────────
-  const totalItems = compra.detalles.reduce((acc, d) => acc + d.cantidad, 0);
+  const totalItems = venta.detalles.reduce((acc, d) => acc + d.cantidad, 0);
 
   return (
     <div className={styles.container}>
       {/* ── Navegación ── */}
-      <Link href="/compras" className={styles.backLink}>
-        ← Volver al historial de compras
+      <Link href="/ventas" className={styles.backLink}>
+        ← Volver al historial de ventas
       </Link>
 
       {/* ── Encabezado ── */}
       <div className={styles.header}>
-        <h1 className={styles.title}>Compra #{compra.id}</h1>
+        <h1 className={styles.title}>Venta #{venta.id}</h1>
         <span className={`${styles.badge} ${styles.badgeSuccess}`}>
           Registrada
         </span>
@@ -110,51 +110,23 @@ export default function DetalleCompraPage() {
         <p className={styles.sectionTitle}>Información General</p>
         <div className={styles.infoGrid}>
           <div className={styles.infoItem}>
-            <span className={styles.infoItemLabel}>Proveedor</span>
+            <span className={styles.infoItemLabel}>Fecha de Venta</span>
             <span className={styles.infoItemValue}>
-              {compra.proveedor?.nombre ?? `#${compra.proveedorId}`}
-            </span>
-          </div>
-          <div className={styles.infoItem}>
-            <span className={styles.infoItemLabel}>NIT Proveedor</span>
-            <span className={styles.infoItemValue}>
-              {compra.proveedor?.nit ?? "—"}
-            </span>
-          </div>
-          <div className={styles.infoItem}>
-            <span className={styles.infoItemLabel}>Fecha de Compra</span>
-            <span className={styles.infoItemValue}>
-              {formatFecha(compra.fecha)}
+              {formatFecha(venta.fecha)}
             </span>
           </div>
           <div className={styles.infoItem}>
             <span className={styles.infoItemLabel}>N° de Ítems</span>
             <span className={styles.infoItemValue}>
-              {compra.detalles.length} producto{compra.detalles.length !== 1 ? "s" : ""} ({totalItems} unidades)
+              {venta.detalles.length} producto{venta.detalles.length !== 1 ? "s" : ""} ({totalItems} unidades)
             </span>
           </div>
-          {compra.proveedor?.telefono && (
-            <div className={styles.infoItem}>
-              <span className={styles.infoItemLabel}>Teléfono</span>
-              <span className={styles.infoItemValue}>
-                {compra.proveedor.telefono}
-              </span>
-            </div>
-          )}
-          {compra.proveedor?.correo && (
-            <div className={styles.infoItem}>
-              <span className={styles.infoItemLabel}>Correo</span>
-              <span className={styles.infoItemValue}>
-                {compra.proveedor.correo}
-              </span>
-            </div>
-          )}
         </div>
 
         {/* Total destacado */}
         <div className={styles.totalBox}>
-          <span className={styles.totalLabel}>Total de la Compra:</span>
-          <span className={styles.totalValue}>{formatMonto(compra.total)}</span>
+          <span className={styles.totalLabel}>Total de la Venta:</span>
+          <span className={styles.totalValue}>{formatMonto(venta.total)}</span>
         </div>
       </div>
 
@@ -174,7 +146,7 @@ export default function DetalleCompraPage() {
               </tr>
             </thead>
             <tbody>
-              {compra.detalles.map((d, i) => {
+              {venta.detalles.map((d, i) => {
                 const subtotal = d.cantidad * d.precioUnitario;
                 return (
                   <tr key={d.id}>
@@ -210,7 +182,7 @@ export default function DetalleCompraPage() {
             textAlign: "center",
           }}
         >
-          🔒 Las compras son inmutables para garantizar la trazabilidad del
+          🔒 Las ventas son inmutables para garantizar la trazabilidad del
           inventario. No es posible editarlas ni eliminarlas.
         </p>
       </div>
