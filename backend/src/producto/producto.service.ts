@@ -82,4 +82,12 @@ export class ProductoService {
 
     return this.productoRepo.delete(id);
   }
+
+  // ----------------------------------------------------------
+  // HU-09: Listar productos con stock bajo mínimo
+  // ----------------------------------------------------------
+  async findStockBajo() {
+    return this.productoRepo.findStockBajo();
+  }
 }
+

@@ -49,6 +49,15 @@ export default function Home() {
             Registra ventas al público y consulta el historial de movimientos del día.
           </p>
         </Link>
+
+        {/* ── HU-09: Alertas de Stock Bajo ── */}
+        <Link href="/stock-bajo" className={`${styles.card} ${styles.cardAlert}`}>
+          <div className={styles.cardIcon}>⚠️</div>
+          <h2 className={styles.cardTitle}>Stock Bajo</h2>
+          <p className={styles.cardDesc}>
+            Consulta los productos con stock inferior al mínimo y programa reabastecimiento.
+          </p>
+        </Link>
       </div>
     </div>
   );

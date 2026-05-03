@@ -56,4 +56,25 @@ export class ProductoRepository {
       orderBy: { createdAt: 'desc' },
     });
   }
+
+  // ----------------------------------------------------------
+  // HU-09: Productos con stock por debajo del mínimo
+  // Prisma no soporta comparación campo-campo (stock < stockMinimo)
+  // en where, por lo que cargamos candidatos (stock < máximo razonable)
+  // y filtramos en JS. Seguro para el dataset académico.
+  // ----------------------------------------------------------
+  async findStockBajo() {
+    // Obtener todos los productos donde stockMinimo > 0
+    // (si stockMinimo=0 y stock=0 no es realmente "bajo mínimo")
+    const productos = await this.prisma.producto.findMany({
+      where: {
+        stockMinimo: { gt: 0 },
+      },
+      include: { categoria: true },
+      orderBy: { stock: 'asc' },
+    });
+    // Filtrar en JS: solo los que tienen stock actual < stockMinimo
+    return productos.filter((p) => p.stock < p.stockMinimo);
+  }
 }
+

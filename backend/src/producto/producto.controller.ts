@@ -15,6 +15,15 @@ export class ProductoController {
     return this.productoService.findAll(page ? +page : 1, limit ? +limit : 10);
   }
 
+  // ----------------------------------------------------------
+  // HU-09: Obtener productos con stock menor al mínimo
+  // IMPORTANTE: Debe ir antes de :id para evitar captura de rutas
+  // ----------------------------------------------------------
+  @Get('stock-bajo')
+  findStockBajo() {
+    return this.productoService.findStockBajo();
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productoService.findOne(id);

@@ -14,6 +14,11 @@ export interface Producto {
   updatedAt?: string;
 }
 
+/** Producto con stock bajo — devuelto por GET /producto/stock-bajo */
+export interface StockBajoProducto extends Producto {
+  categoria: { id: number; nombre: string; descripcion?: string | null };
+}
+
 export type CreateProductoDto = Omit<Producto, "id" | "createdAt" | "updatedAt" | "categoria">;
 export type UpdateProductoDto = Partial<CreateProductoDto>;
 
@@ -29,4 +34,7 @@ export const productosService = {
     api.put<Producto>(`/producto/${id}`, data),
   remove: (id: number) => api.delete<void>(`/producto/${id}`),
   findProveedores: (id: number) => api.get<any[]>(`/producto/${id}/proveedores`),
+  /** HU-09: Productos con stock menor al mínimo configurado */
+  findStockBajo: () => api.get<StockBajoProducto[]>("/producto/stock-bajo"),
 };
+

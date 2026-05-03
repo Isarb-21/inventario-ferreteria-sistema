@@ -116,3 +116,37 @@
     color: #9ca3af;
   }
 }
+
+/* ── HU-09: Card de Alerta (Stock Bajo) ── */
+.cardAlert {
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+.cardAlert:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 30px 60px rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.5);
+}
+
+.cardAlert .cardIcon {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+}
+
+.cardAlert .cardTitle {
+  color: #f59e0b;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cardAlert {
+    border-color: rgba(245, 158, 11, 0.2);
+    background: rgba(20, 16, 5, 0.7);
+  }
+  .cardAlert .cardIcon {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+  }
+  .cardAlert .cardTitle {
+    color: #fbbf24;
+  }
+}

@@ -142,3 +142,37 @@
 .hamburger.open span:nth-child(3) {
   transform: translateY(-8px) rotate(-45deg);
 }
+
+/* ── HU-09: Stock Bajo nav item ── */
+.navLinkAlert {
+  color: #f59e0b !important;
+  position: relative;
+}
+
+.navLinkAlert:hover {
+  background: rgba(245, 158, 11, 0.12) !important;
+  color: #fbbf24 !important;
+}
+
+/* Badge numérico flotante */
+.navBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  border-radius: 999px;
+  margin-left: auto;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.5);
+  animation: pulse-nav 2s ease-in-out infinite;
+}
+
+@keyframes pulse-nav {
+  0%, 100% { box-shadow: 0 2px 6px rgba(239, 68, 68, 0.5); }
+  50% { box-shadow: 0 2px 12px rgba(239, 68, 68, 0.8); }
+}
