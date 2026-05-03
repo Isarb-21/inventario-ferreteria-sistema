@@ -39,11 +39,12 @@ export default function ProductoDetallePage() {
 
   const loadData = async () => {
     try {
-      const [prod, catRes, provRes] = await Promise.all([
+      // 1. Cargar datos esenciales (producto y categorías)
+      const [prod, catRes] = await Promise.all([
         productosService.findOne(idValue),
-        api.get<any>("/categoria"),
-        productosService.findProveedores(idValue)
+        api.get<any>("/categoria")
       ]);
+      
       const data = prod;
       setProducto(data);
       setFormData({
@@ -55,11 +56,18 @@ export default function ProductoDetallePage() {
         stock: data.stock.toString(),
         stockMinimo: data.stockMinimo.toString()
       });
+      
       const cats = Array.isArray(catRes) ? catRes : catRes?.data || [];
       setCategorias(cats);
 
-      const provs = (provRes as any)?.data || provRes;
-      setProveedores(Array.isArray(provs) ? provs.map((p: any) => p.proveedor) : []);
+      // 2. Cargar datos secundarios (proveedores) por separado para no bloquear la página
+      try {
+        const provRes = await productosService.findProveedores(idValue);
+        const provs = (provRes as any)?.data || provRes;
+        setProveedores(Array.isArray(provs) ? provs.map((p: any) => p.proveedor) : []);
+      } catch (provErr) {
+        console.error("Error al cargar proveedores del producto:", provErr);
+      }
     } catch (err: any) {
       setError(err.message || "Error al cargar producto");
     } finally {
@@ -118,7 +126,15 @@ export default function ProductoDetallePage() {
   };
 
   if (loading) return <div className={styles.container} style={{ paddingTop: '20vh', textAlign: 'center', fontWeight: 'bold' }}>Cargando datos del producto...</div>;
-  if (!producto) return <div className={styles.container} style={{ paddingTop: '20vh', textAlign: 'center', color: '#ef4444', fontWeight: 'bold' }}>Producto no encontrado</div>;
+  
+  if (!producto) return (
+    <div className={styles.container} style={{ paddingTop: '20vh', textAlign: 'center' }}>
+      <div style={{ color: '#ef4444', fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '1.5rem' }}>
+        {error || "Producto no encontrado"}
+      </div>
+      <Link href="/productos" className={styles.btnSecondary}>Volver al listado de productos</Link>
+    </div>
+  );
 
   return (
     <div className={styles.container}>
